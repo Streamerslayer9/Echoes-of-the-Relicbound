@@ -1,7 +1,11 @@
 package com.relicbound.item;
 
 import com.relicbound.RelicboundMod;
-import net.minecraft.network.chat.Component;
+import com.relicbound.sound.SoundPropagationSimulator;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -26,15 +30,16 @@ public class ResonanceForkItem extends Item {
             return InteractionResultHolder.fail(stack);
         }
 
-        if (!level.isClientSide) {
+        if (level instanceof ServerLevel serverLevel) {
             player.getCooldowns().addCooldown(this, COOLDOWN_TICKS);
 
-            // Milestone 1: debug only. Milestone 2 replaces this with
-            // SoundPropagationSimulator.simulateWave(...) on the server thread.
-            player.sendSystemMessage(Component.literal(String.format(
-                    "[Relicbound] Resonance Fork struck at %.1f, %.1f, %.1f (energy %.1f, radius %d)",
-                    player.getX(), player.getY(), player.getZ(), INITIAL_ENERGY, MAX_RADIUS)));
-            RelicboundMod.LOGGER.info("Resonance Fork used by {}", player.getName().getString());
+            BlockPos origin = BlockPos.containing(player.getEyePosition());
+            SoundPropagationSimulator.simulateWave(serverLevel, origin, INITIAL_ENERGY, MAX_RADIUS);
+
+            serverLevel.playSound(null, origin, SoundEvents.AMETHYST_BLOCK_CHIME,
+                    SoundSource.PLAYERS, 0.8f, 1.5f);
+            RelicboundMod.LOGGER.debug("Resonance Fork pulse started by {} at {}",
+                    player.getName().getString(), origin);
         }
 
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());

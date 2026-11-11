@@ -1,0 +1,25 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="All Rights Reserved"
+
+[[mods]]
+modId="relicbound"
+version="0.1.0"
+displayName="Echoes of the Relicbound"
+description='''
+Prototype 0.1 - an acoustic puzzle and stealth mod built around sound propagation.
+'''
+
+[[dependencies.relicbound]]
+modId="forge"
+mandatory=true
+versionRange="[47.2.0,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.relicbound]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.20.1,1.21)"
+ordering="NONE"
+side="BOTH"
